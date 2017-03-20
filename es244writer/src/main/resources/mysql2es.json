@@ -1,0 +1,61 @@
+{
+    "job": {
+        "content": [
+            {
+                "reader": {
+                    "name": "mysqlreader",
+                    "parameter": {
+                        "column": [
+                            "id",
+                            "name",
+                            "create_time"
+                        ],
+                        "connection": [
+                            {
+                                "jdbcUrl": [
+                                    "jdbc:mysql://192.168.56.121:3306/eif_test"
+                                ],
+                                "table": [
+                                    "tb_test1"
+                                ]
+                            }
+                        ],
+                        "password": "123",
+                        "username": "root",
+                        "where": ""
+                    }
+                },
+                "writer": {
+                    "name": "es244writer",
+                    "parameter": {
+                        "clusterName": "elasticsearch",
+                        "host": "192.168.56.121:9300",
+                        "index": "eif_test",
+                        "type": "tb_test1",
+                        "pk": "id",
+                        "batchSize": "1000",
+                        "column": [
+                            {
+                                "name": "id",
+                                "type": "long"
+                            },
+                            {
+                                "name": "name",
+                                "type": "string"
+                            },
+                            {
+                                "name": "create_time",
+                                "type": "date"
+                            }
+                        ]
+                    }
+                }
+            }
+        ],
+        "setting": {
+            "speed": {
+                "channel": "3"
+            }
+        }
+    }
+}
