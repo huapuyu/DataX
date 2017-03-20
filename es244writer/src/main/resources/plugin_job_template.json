@@ -1,0 +1,12 @@
+{
+    "name": "es244writer",
+    "parameter": {
+        "clusterName": "",
+        "host": "",
+        "index": "",
+        "type": "",
+        "pk": "",
+        "batchSize": "",
+        "column": []
+    }
+}

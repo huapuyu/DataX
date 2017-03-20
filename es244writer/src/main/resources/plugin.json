@@ -1,0 +1,6 @@
+{
+    "name": "es244writer",
+    "class": "com.alibaba.datax.plugin.writer.es244writer.Es244Writer",
+    "description": "useScene: prod. mechanism: via TransportClient connect ElasticSearch write data concurrent.",
+    "developer": "alibaba"
+}
