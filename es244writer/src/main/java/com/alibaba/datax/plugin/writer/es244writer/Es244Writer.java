@@ -1,9 +1,7 @@
 package com.alibaba.datax.plugin.writer.es244writer;
 
-import java.math.BigDecimal;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -65,7 +63,8 @@ public class Es244Writer extends Writer {
 		private String pk;
 		private Integer batchSize;
 		private JSONArray columnMeta;
-		private SimpleDateFormat dateFormat = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
+
+		// private SimpleDateFormat dateFormat = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
 
 		@Override
 		public void init() {
@@ -140,23 +139,22 @@ public class Es244Writer extends Writer {
 						String columnType = columnMeta.getJSONObject(i).getString(KeyConstant.COLUMN_TYPE);
 						String columnName = columnMeta.getJSONObject(i).getString(KeyConstant.COLUMN_NAME);
 
+						// TODO Anders decimal有精度问题，es不支持该数据类型
 						if (("decimal").equalsIgnoreCase(columnType)) {
-							Column col = record.getColumn(i);
-
-							if (col == null || col.asBigDecimal() == null) {
-								document.put(columnName, null);
-							} else {
-								document.put(columnName, record.getColumn(i).asBigDecimal().multiply(new BigDecimal(100)).longValue());
-							}
-
+							document.put(columnName, record.getColumn(i).asBigDecimal().doubleValue());
 						} else if (columnType.equalsIgnoreCase(Column.Type.DATE.name())) {
-							Column col = record.getColumn(i);
-
-							if (col == null || col.asDate() == null) {
-								document.put(columnName, null);
-							} else {
-								document.put(columnName, dateFormat.format(record.getColumn(i).asDate()));
-							}
+							// document.put(columnName, dateFormat.format(record.getColumn(i).asDate()));
+							document.put(columnName, record.getColumn(i).asDate());
+						} else if (columnType.equalsIgnoreCase(Column.Type.LONG.name())) {
+							document.put(columnName, record.getColumn(i).asLong());
+						} else if (columnType.equalsIgnoreCase(Column.Type.INT.name())) {
+							document.put(columnName, record.getColumn(i).asLong().intValue());
+						} else if (("short").equalsIgnoreCase(columnType)) {
+							document.put(columnName, record.getColumn(i).asLong().shortValue());
+						} else if (columnType.equalsIgnoreCase(Column.Type.DOUBLE.name())) {
+							document.put(columnName, record.getColumn(i).asDouble());
+						} else if (("float").equalsIgnoreCase(columnType)) {
+							document.put(columnName, record.getColumn(i).asDouble().floatValue());
 						} else {
 							document.put(columnName, record.getColumn(i).getRawData());
 						}
@@ -167,7 +165,7 @@ public class Es244Writer extends Writer {
 
 				BulkResponse bulkResponse = bulkRequest.get();
 
-				LOGGER.info("bulk size : {}", bulkResponse.getItems().length);
+				LOGGER.debug("bulk size : {}", bulkResponse.getItems().length);
 
 				if (bulkResponse.hasFailures()) {
 					throw new RuntimeException(bulkResponse.buildFailureMessage());
@@ -176,23 +174,5 @@ public class Es244Writer extends Writer {
 				LOGGER.error("failed to bulk insert", e);
 			}
 		}
-
-		// static private String convert(String oldFieldName) {
-		// if (StringUtils.isBlank(oldFieldName)) {
-		// return StringUtils.EMPTY;
-		// }
-		// StringBuilder sb = new StringBuilder(oldFieldName);
-		// Matcher mc = Pattern.compile("_").matcher(oldFieldName);
-		// int i = 0;
-		// while (mc.find()) {
-		// int position = mc.end() - (i++);
-		// sb.replace(position - 1, position + 1, sb.substring(position, position + 1).toUpperCase());
-		// }
-		// return sb.toString();
-		// }
-
-		// public static void main(String[] args) {
-		// System.out.println(convert("asfasdfasdf_asdfasdf_asdfasdf"));
-		// }
 	}
 }
