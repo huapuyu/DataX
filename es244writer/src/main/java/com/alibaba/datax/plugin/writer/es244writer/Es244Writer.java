@@ -2,6 +2,7 @@ package com.alibaba.datax.plugin.writer.es244writer;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -64,7 +65,7 @@ public class Es244Writer extends Writer {
 		private Integer batchSize;
 		private JSONArray columnMeta;
 
-		// private SimpleDateFormat dateFormat = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
+		private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZZ");
 
 		@Override
 		public void init() {
@@ -143,8 +144,7 @@ public class Es244Writer extends Writer {
 						if (("decimal").equalsIgnoreCase(columnType)) {
 							document.put(columnName, record.getColumn(i).asBigDecimal().doubleValue());
 						} else if (columnType.equalsIgnoreCase(Column.Type.DATE.name())) {
-							// document.put(columnName, dateFormat.format(record.getColumn(i).asDate()));
-							document.put(columnName, record.getColumn(i).asDate());
+							document.put(columnName, dateFormat.format(record.getColumn(i).asDate()));
 						} else if (columnType.equalsIgnoreCase(Column.Type.LONG.name())) {
 							document.put(columnName, record.getColumn(i).asLong());
 						} else if (columnType.equalsIgnoreCase(Column.Type.INT.name())) {
