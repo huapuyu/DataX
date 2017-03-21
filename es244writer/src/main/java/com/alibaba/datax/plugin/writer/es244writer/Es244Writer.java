@@ -142,19 +142,61 @@ public class Es244Writer extends Writer {
 
 						// TODO Anders decimal有精度问题，es不支持该数据类型
 						if (("decimal").equalsIgnoreCase(columnType)) {
-							document.put(columnName, record.getColumn(i).asBigDecimal().doubleValue());
+							Column col = record.getColumn(i);
+
+							if (col == null || col.asBigDecimal() == null) {
+								document.put(columnName, null);
+							} else {
+								document.put(columnName, col.asBigDecimal().doubleValue());
+							}
 						} else if (columnType.equalsIgnoreCase(Column.Type.DATE.name())) {
-							document.put(columnName, dateFormat.format(record.getColumn(i).asDate()));
+							Column col = record.getColumn(i);
+
+							if (col == null || col.asDate() == null) {
+								document.put(columnName, null);
+							} else {
+								document.put(columnName, dateFormat.format(col.asDate()));
+							}
 						} else if (columnType.equalsIgnoreCase(Column.Type.LONG.name())) {
-							document.put(columnName, record.getColumn(i).asLong());
+							Column col = record.getColumn(i);
+
+							if (col == null || col.asLong() == null) {
+								document.put(columnName, null);
+							} else {
+								document.put(columnName, col.asLong());
+							}
 						} else if (columnType.equalsIgnoreCase(Column.Type.INT.name())) {
-							document.put(columnName, record.getColumn(i).asLong().intValue());
+							Column col = record.getColumn(i);
+
+							if (col == null || col.asLong() == null) {
+								document.put(columnName, null);
+							} else {
+								document.put(columnName, col.asLong().intValue());
+							}
 						} else if (("short").equalsIgnoreCase(columnType)) {
-							document.put(columnName, record.getColumn(i).asLong().shortValue());
+							Column col = record.getColumn(i);
+
+							if (col == null || col.asLong() == null) {
+								document.put(columnName, null);
+							} else {
+								document.put(columnName, col.asLong().shortValue());
+							}
 						} else if (columnType.equalsIgnoreCase(Column.Type.DOUBLE.name())) {
-							document.put(columnName, record.getColumn(i).asDouble());
+							Column col = record.getColumn(i);
+
+							if (col == null || col.asDouble() == null) {
+								document.put(columnName, null);
+							} else {
+								document.put(columnName, col.asDouble());
+							}
 						} else if (("float").equalsIgnoreCase(columnType)) {
-							document.put(columnName, record.getColumn(i).asDouble().floatValue());
+							Column col = record.getColumn(i);
+
+							if (col == null || col.asDouble() == null) {
+								document.put(columnName, null);
+							} else {
+								document.put(columnName, col.asDouble().floatValue());
+							}
 						} else {
 							document.put(columnName, record.getColumn(i).getRawData());
 						}
