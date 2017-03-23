@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
+import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
@@ -113,25 +114,25 @@ public class Es244Writer extends Writer {
 
 		@Override
 		public void startWrite(RecordReceiver lineReceiver) {
-			BulkRequestBuilder bulkRequest = client.prepareBulk();
-
 			List<Record> writerBuffer = new ArrayList<Record>(this.batchSize);
 			Record record = null;
 			while ((record = lineReceiver.getFromReader()) != null) {
 				writerBuffer.add(record);
 				if (writerBuffer.size() >= this.batchSize) {
-					batchInsert(bulkRequest, writerBuffer, this.columnMeta);
+					batchInsert(writerBuffer, this.columnMeta);
 					writerBuffer.clear();
 				}
 			}
 			if (!writerBuffer.isEmpty()) {
-				batchInsert(bulkRequest, writerBuffer, this.columnMeta);
+				batchInsert(writerBuffer, this.columnMeta);
 				writerBuffer.clear();
 			}
 		}
 
-		private void batchInsert(BulkRequestBuilder bulkRequest, List<Record> writerBuffer, JSONArray columnMeta) {
+		private void batchInsert(List<Record> writerBuffer, JSONArray columnMeta) {
 			try {
+				BulkRequestBuilder bulkRequest = this.client.prepareBulk();
+
 				for (Record record : writerBuffer) {
 					Map<String, Object> document = new HashMap<String, Object>();
 
@@ -204,15 +205,13 @@ public class Es244Writer extends Writer {
 					bulkRequest.add(client.prepareIndex(this.index, this.type, document.get(this.pk).toString()).setSource(document));
 				}
 
-				LOGGER.error("num : {}", bulkRequest.numberOfActions());
+				BulkResponse bulkResponse = bulkRequest.get();
 
-				// BulkResponse bulkResponse = bulkRequest.get();
-				//
-				// LOGGER.debug("bulk size : {}", bulkResponse.getItems().length);
-				//
-				// if (bulkResponse.hasFailures()) {
-				// throw new RuntimeException(bulkResponse.buildFailureMessage());
-				// }
+				LOGGER.debug("bulk size : {}", bulkResponse.getItems().length);
+
+				if (bulkResponse.hasFailures()) {
+					throw new RuntimeException(bulkResponse.buildFailureMessage());
+				}
 			} catch (Exception e) {
 				LOGGER.error("failed to bulk insert", e);
 			}
