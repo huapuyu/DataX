@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
-import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
@@ -140,6 +139,8 @@ public class Es244Writer extends Writer {
 						String columnType = columnMeta.getJSONObject(i).getString(KeyConstant.COLUMN_TYPE);
 						String columnName = columnMeta.getJSONObject(i).getString(KeyConstant.COLUMN_NAME);
 
+						LOGGER.error(record.getColumn(i).getRawData().toString());
+
 						// TODO Anders decimal有精度问题，es不支持该数据类型
 						if (("decimal").equalsIgnoreCase(columnType)) {
 							Column col = record.getColumn(i);
@@ -205,13 +206,13 @@ public class Es244Writer extends Writer {
 					bulkRequest.add(client.prepareIndex(this.index, this.type, document.get(this.pk).toString()).setSource(document));
 				}
 
-				BulkResponse bulkResponse = bulkRequest.get();
-
-				LOGGER.debug("bulk size : {}", bulkResponse.getItems().length);
-
-				if (bulkResponse.hasFailures()) {
-					throw new RuntimeException(bulkResponse.buildFailureMessage());
-				}
+				// BulkResponse bulkResponse = bulkRequest.get();
+				//
+				// LOGGER.debug("bulk size : {}", bulkResponse.getItems().length);
+				//
+				// if (bulkResponse.hasFailures()) {
+				// throw new RuntimeException(bulkResponse.buildFailureMessage());
+				// }
 			} catch (Exception e) {
 				LOGGER.error("failed to bulk insert", e);
 			}
