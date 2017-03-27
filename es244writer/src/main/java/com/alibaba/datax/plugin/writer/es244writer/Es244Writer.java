@@ -201,7 +201,6 @@ public class Es244Writer extends Writer {
 							document.put(columnName, record.getColumn(i).getRawData());
 						}
 					}
-
 					bulkRequest.add(client.prepareIndex(this.index, this.type, document.get(this.pk).toString()).setSource(document));
 				}
 
