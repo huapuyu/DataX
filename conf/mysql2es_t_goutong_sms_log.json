@@ -1,0 +1,136 @@
+{
+    "job": {
+        "content": [
+            {
+                "reader": {
+                    "name": "mysqlreader",
+                    "parameter": {
+                        "column": [
+                            "id",
+                            "channel_id",
+                            "mobile",
+                            "template_id",
+                            "business_id",
+                            "args_list",
+                            "msg_title",
+                            "msg_body",
+                            "send_time",
+                            "status",
+                            "channel_request_id",
+                            "retry_times",
+                            "memo",
+                            "create_time",
+                            "modify_time",
+                            "request_id",
+                            "request_channel",
+                            "sub_system_name"
+                        ],
+                        "connection": [
+                            {
+                                "jdbcUrl": [
+                                    "jdbc:mysql://10.1.10.55:43306/otter_goutong"
+                                ],
+                                "table": [
+                                    "t_goutong_sms_log"
+                                ]
+                            }
+                        ],
+                        "password": "75rFB8wE05g7s2C",
+                        "username": "u_otter",
+                        "where": ""
+                    }
+                },
+                "writer": {
+                    "name": "es244writer",
+                    "parameter": {
+                        "clusterName": "otter-es",
+                        "host": "192.168.101.104:49300",
+                        "index": "otter_goutong",
+                        "type": "t_goutong_sms_log",
+                        "pk": "id",
+                        "batchSize": "1000",
+                        "column": [
+                            {
+                                "name": "id",
+                                "type": "long"
+                            },
+                            {
+                                "name": "channel_id",
+                                "type": "long"
+                            },
+                            {
+                                "name": "mobile",
+                                "type": "string"
+                            },
+                            {
+                                "name": "template_id",
+                                "type": "long"
+                            },
+                            {
+                                "name": "business_id",
+                                "type": "int"
+                            },
+                            {
+                                "name": "args_list",
+                                "type": "string"
+                            },
+                            {
+                                "name": "msg_title",
+                                "type": "string"
+                            },
+                            {
+                                "name": "msg_body",
+                                "type": "string"
+                            },
+                            {
+                                "name": "send_time",
+                                "type": "date"
+                            },
+                            {
+                                "name": "status",
+                                "type": "int"
+                            },
+                            {
+                                "name": "channel_request_id",
+                                "type": "string"
+                            },
+                            {
+                                "name": "retry_times",
+                                "type": "int"
+                            },
+                            {
+                                "name": "memo",
+                                "type": "string"
+                            },
+                            {
+                                "name": "create_time",
+                                "type": "date"
+                            },
+                            {
+                                "name": "modify_time",
+                                "type": "date"
+                            },
+                            {
+                                "name": "request_id",
+                                "type": "string"
+                            },
+                            {
+                                "name": "request_channel",
+                                "type": "string"
+                            },
+                            {
+                                "name": "sub_system_name",
+                                "type": "string"
+                            }
+                        ]
+                    }
+                }
+            }
+        ],
+        "setting": {
+            "speed": {
+                "channel": "3"
+            }
+        }
+    }
+}
